@@ -9,6 +9,7 @@ import todo.model.Item;
 
 import javax.persistence.Query;
 import java.util.List;
+import java.util.function.Function;
 
 public class SqlStore implements AutoCloseable, Store {
     private static final Store INST = new SqlStore();
@@ -26,50 +27,46 @@ public class SqlStore implements AutoCloseable, Store {
 
     @Override
     public void addItem(Item item) {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.save(item);
-        session.getTransaction().commit();
-        session.close();
+        transaction(session -> session.save(item));
     }
 
     @Override
     public List<Item> findAllItems() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List items = session.createQuery("from todo.model.Item").list();
-        session.getTransaction().commit();
-        session.close();
-        return items;
+        return transaction(session -> session.createQuery("from todo.model.Item").list());
     }
 
     @Override
     public List<Item> findAllUndone() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        Query query = session.createQuery("from todo.model.Item where done = 0");
-        List items = query.getResultList();
-        session.getTransaction().commit();
-        session.close();
-        return items;
+        return transaction(session -> session.createQuery("from todo.model.Item where done = 0").list());
     }
 
     @Override
     public void checkItem(int done, int id) {
-        Session session = sf.openSession();
+        transaction(session -> {
+            final Query query = session.createQuery("update todo.model.Item set done = :done where id = :id");
+            query.setParameter("done", done);
+            query.setParameter("id", id);
+            return query.executeUpdate();
+        });
+    }
+
+    private <T> T transaction(final Function<Session, T> command) {
+        final Session session = sf.openSession();
         session.beginTransaction();
-        Query query = session.createQuery(
-                "update todo.model.Item set done = :done where id = :id"
-        );
-        query.setParameter("done", done);
-        query.setParameter("id", id);
-        query.executeUpdate();
-        session.getTransaction().commit();
-        session.close();
+        try {
+            T rsl = command.apply(session);
+            session.getTransaction().commit();
+            return rsl;
+        } catch (final Exception ex) {
+            session.getTransaction().rollback();
+            throw ex;
+        } finally {
+            session.close();
+        }
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         StandardServiceRegistryBuilder.destroy(registry);
     }
 }
