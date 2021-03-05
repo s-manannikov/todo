@@ -42,6 +42,7 @@ public class TaskServlet extends HttpServlet {
         item.setDescription(description);
         item.setCreated(new Timestamp(System.currentTimeMillis()));
         STORE.addItem(item);
+        resp.setStatus(HttpServletResponse.SC_OK);
         resp.sendRedirect("index.html");
     }
 }
