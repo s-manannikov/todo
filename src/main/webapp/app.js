@@ -6,7 +6,10 @@ function validate() {
     }
 }
 
-$(document).ready(getItems(0))
+$(document).ready(function() {
+    getItems(0);
+    login();
+});
 
 function getItems(num) {
     $.ajax({
@@ -20,6 +23,8 @@ function getItems(num) {
             const date = d.toLocaleTimeString() + ' ' + d.toDateString();
             $('#table tr:last').after('<tr class=\"item\"><td>' + data[i].description + '</td>');
             $('#table td:last').after('<td>' + date + '</td>');
+            const user = JSON.stringify(data[i].user);
+            $('#table td:last').after('<td>' + user.split('\"')[5] + '</td>');
             if (data[i].done === 0) {
                 $('#table td:last').after(
                     '<td><input type=\"checkbox\" value=\"'
@@ -35,6 +40,16 @@ function getItems(num) {
                 );
             }
         }
+    });
+}
+
+function login() {
+    $.ajax({
+        type: 'GET',
+        dataType: 'html',
+        url: 'http://localhost:8080/todo/login',
+    }).always(function(data) {
+        $('#sign').html(data);
     });
 }
 
@@ -67,5 +82,24 @@ function getCompletedItems(checkbox) {
         getItems(1);
     } else {
         getItems(0);
+    }
+}
+
+function validateReg() {
+    const name = $('#name').val();
+    const email = $('#email').val();
+    const pass = $('#password').val();
+    if (name === '' || email === '' || pass === '') {
+        alert('All fields are required!');
+        return false;
+    }
+}
+
+function validateLogin() {
+    const email = $('#email').val();
+    const pass = $('#password').val();
+    if (email === '' || pass === '') {
+        alert('All fields are required!');
+        return false;
     }
 }

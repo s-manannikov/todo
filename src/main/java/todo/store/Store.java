@@ -1,6 +1,7 @@
 package todo.store;
 
 import todo.model.Item;
+import todo.model.User;
 
 import java.util.List;
 
@@ -13,4 +14,8 @@ public interface Store {
     List<Item> findAllUndone();
 
     void checkItem(int done, int id);
+
+    void addUser(User user);
+
+    User findUserByEmail(String email);
 }

@@ -5,9 +5,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.query.Query;
 import todo.model.Item;
+import todo.model.User;
 
-import javax.persistence.Query;
 import java.util.List;
 import java.util.function.Function;
 
@@ -47,6 +48,18 @@ public class SqlStore implements AutoCloseable, Store {
             query.setParameter("done", done);
             query.setParameter("id", id);
             return query.executeUpdate();
+        });
+    }
+
+    public void addUser(User user) {
+        transaction(session -> session.save(user));
+    }
+
+    public User findUserByEmail(String email) {
+        return transaction(session -> {
+            Query query = session.createQuery("from todo.model.User where email = :email");
+            query.setParameter("email", email);
+            return (User) query.uniqueResult();
         });
     }
 

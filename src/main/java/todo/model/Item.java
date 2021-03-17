@@ -9,10 +9,13 @@ import java.util.Objects;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String description;
-    Timestamp created;
-    int done;
+    private int id;
+    private String description;
+    private Timestamp created;
+    private int done;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    private User user;
 
     public int getId() {
         return id;
@@ -46,6 +49,14 @@ public class Item {
         this.done = done;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,11 +65,12 @@ public class Item {
         return id == item.id
                 && done == item.done
                 && Objects.equals(description, item.description)
-                && Objects.equals(created, item.created);
+                && Objects.equals(created, item.created)
+                && Objects.equals(user, item.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, created, done);
+        return Objects.hash(id, description, created, done, user);
     }
 }
