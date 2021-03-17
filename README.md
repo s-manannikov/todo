@@ -2,9 +2,10 @@
 
 [![Build Status](https://travis-ci.org/s-manannikov/todo.svg?branch=master)](https://travis-ci.org/s-manannikov/todo)
 
-Simple to do list implementation.
+Simple To-Do List with registration, authentication and saving tasks to DB.
 
 Technologies
+- Java 14
 - Java Servlet API
 - Apache Tomcat
 - Hibernate
