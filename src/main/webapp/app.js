@@ -4,6 +4,7 @@ function validate() {
         alert('Please enter the task!');
         return false;
     }
+    return true;
 }
 
 $(document).ready(function() {
@@ -93,6 +94,7 @@ function validateReg() {
         alert('All fields are required!');
         return false;
     }
+    return true;
 }
 
 function validateLogin() {
@@ -101,5 +103,68 @@ function validateLogin() {
     if (email === '' || pass === '') {
         alert('All fields are required!');
         return false;
+    }
+    return true;
+}
+
+function signOut() {
+    $.ajax({
+        url: 'http://localhost:8080/todo/reg',
+    }).done(
+        window.location.href = "http://localhost:8080/todo/login.html"
+    )
+}
+
+function addTask() {
+    if (validate() === true) {
+        const description = $('#description').val();
+        const json = {description: description};
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(json),
+            url: 'http://localhost:8080/todo/tasks',
+        }).done(
+            window.location.href = "http://localhost:8080/todo/index.html"
+        )
+    }
+}
+
+function reg() {
+    if (validateReg() === true) {
+        const name = $('#name').val();
+        const mail = $('#email').val();
+        const pass = $('#password').val();
+        const json = {name: name, email: mail, password: pass};
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(json),
+            url: 'http://localhost:8080/todo/reg',
+        }).done(
+            window.location.href = "http://localhost:8080/todo/login.html"
+        )
+    }
+}
+
+function log() {
+    if (validateLogin() === true) {
+        const mail = $('#email').val();
+        const pass = $('#password').val();
+        const json = {email: mail, password: pass};
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(json),
+            url: 'http://localhost:8080/todo/login',
+            statusCode: {
+                200: function () {
+                    window.location.href = "http://localhost:8080/todo/index.html";
+                },
+                417: function () {
+                    alert('E-mail or password incorrect!');
+                }
+            }
+        })
     }
 }

@@ -1,5 +1,6 @@
 package todo.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import todo.model.Item;
 import todo.model.User;
@@ -39,13 +40,14 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        String description = req.getParameter("description");
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(req.getReader());
+        String description = jsonNode.get("description").asText();
         Item item = new Item();
         item.setDescription(description);
         item.setCreated(new Timestamp(System.currentTimeMillis()));
         item.setUser(user);
         STORE.addItem(item);
         resp.setStatus(HttpServletResponse.SC_OK);
-        resp.sendRedirect("index.html");
     }
 }

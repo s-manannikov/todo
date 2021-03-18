@@ -1,5 +1,7 @@
 package todo.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import todo.model.User;
 import todo.store.SqlStore;
 import todo.store.Store;
@@ -18,19 +20,21 @@ public class RegServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().invalidate();
-        resp.sendRedirect("login.html");
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(req.getReader());
+        String name = jsonNode.get("name").asText();
+        String email = jsonNode.get("email").asText();
+        String password = jsonNode.get("password").asText();
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setPassword(password);
         STORE.addUser(user);
-        resp.sendRedirect("login.html");
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

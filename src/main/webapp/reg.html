@@ -17,7 +17,7 @@
 <script src="app.js"></script>
 
 <div class="col-md-4" style="margin-left: 30%; margin-top: 10%">
-            <form name="form" style="width: 400px" action="http://localhost:8080/todo/reg" method="post">
+            <form name="regForm" style="width: 400px">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" class="form-control" name="name" id="name" placeholder="Name">
@@ -30,9 +30,10 @@
                     <label for="password">Password</label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password">
                 </div>
-                <button type="submit" class="btn btn-success" onclick="return validateReg()">Sign Up</button>
+                <button type="button" class="btn btn-success" onclick="reg()">Sign Up</button>
                 <a href="login.html" class="btn btn-success">Sign In</a>
             </form>
 </div>
+
 </body>
 </html>
