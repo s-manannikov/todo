@@ -1,5 +1,6 @@
 package todo.store;
 
+import todo.model.Category;
 import todo.model.Item;
 import todo.model.User;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface Store {
 
-    void addItem(Item item);
+    void addItem(Item item, List<String> list);
 
     List<Item> findAllItems();
 
@@ -18,4 +19,6 @@ public interface Store {
     void addUser(User user);
 
     User findUserByEmail(String email);
+
+    List<Category> getAllCategories();
 }

@@ -1,16 +1,32 @@
 function validate() {
     const desc = $('#description').val();
-    if (desc === '') {
-        alert('Please enter the task!');
+    const select = document.getElementById('category');
+    if ((desc === '') || (!select.value)) {
+        alert('Please enter the task and choose category!');
         return false;
     }
     return true;
 }
 
 $(document).ready(function() {
+    getCategories();
     getItems(0);
     login();
 });
+
+function getCategories() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/todo/categories',
+    }).done(function(data) {
+        let options = '';
+        for (let item of data) {
+            options += '<option value=\"' + item.id + '\">' + item.name + '</option>';
+        }
+        $('#options').html('<label><select id="category" name="category" multiple>' + options + '</select></label>');
+        $('#category').multiselect();
+    });
+}
 
 function getItems(num) {
     $.ajax({
@@ -19,24 +35,28 @@ function getItems(num) {
         data: {json:num},
         url: 'http://localhost:8080/todo/tasks',
     }).done(function(data) {
-        for (let i = 0; i < data.length; i++) {
-            const d = new Date(data[i].created);
+        for (let item of data) {
+            const d = new Date(item.created);
             const date = d.toLocaleTimeString() + ' ' + d.toDateString();
-            $('#table tr:last').after('<tr class=\"item\"><td>' + data[i].description + '</td>');
+            $('#table tr:last').after('<tr class=\"item\"><td>' + item.description + '</td>');
             $('#table td:last').after('<td>' + date + '</td>');
-            const user = JSON.stringify(data[i].user);
-            $('#table td:last').after('<td>' + user.split('\"')[5] + '</td>');
-            if (data[i].done === 0) {
+            let category = item.categories[0].name;
+            for (let i = 1; i < item.categories.length; i++) {
+                category += ', ' + item.categories[i].name
+            }
+            $('#table td:last').after('<td>' + category + '</td>');
+            $('#table td:last').after('<td>' + item.user.name + '</td>');
+            if (item.done === 0) {
                 $('#table td:last').after(
                     '<td><input type=\"checkbox\" value=\"'
-                    + data[i].id
+                    + item.id
                     + '\" onchange=\"check(this)\">'
                     + '</td></tr>'
                 );
             } else {
                 $('#table td:last').after(
                     '<td><input type=\"checkbox\" checked value=\"'
-                    + data[i].id
+                    + item.id
                     + '\" onchange=\"check(this)\">' + '</td></tr>'
                 );
             }
@@ -49,7 +69,7 @@ function login() {
         type: 'GET',
         dataType: 'html',
         url: 'http://localhost:8080/todo/login',
-    }).always(function(data) {
+    }).done(function(data) {
         $('#sign').html(data);
     });
 }
@@ -118,7 +138,8 @@ function signOut() {
 function addTask() {
     if (validate() === true) {
         const description = $('#description').val();
-        const json = {description: description};
+        const category = $('#category').val();
+        const json = {description: description, category: category};
         $.ajax({
             type: 'POST',
             contentType: 'application/json',
