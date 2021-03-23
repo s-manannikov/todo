@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/tasks")
@@ -47,7 +47,7 @@ public class TaskServlet extends HttpServlet {
         List<String> categories = Arrays.asList(objectMapper.treeToValue(jsonNode.get("category"), String[].class));
         Item item = new Item();
         item.setDescription(description);
-        item.setCreated(new Timestamp(System.currentTimeMillis()));
+        item.setCreated(new Date(System.currentTimeMillis()));
         item.setUser(user);
         STORE.addItem(item, categories);
         resp.setStatus(HttpServletResponse.SC_OK);
