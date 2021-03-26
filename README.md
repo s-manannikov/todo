@@ -12,3 +12,5 @@ Technologies
 - PostgreSQL
 - JS (jQuery, AJAX), HTML, CSS
 - Maven
+
+![](https://github.com/s-manannikov/todo/blob/master/img/01.png)
