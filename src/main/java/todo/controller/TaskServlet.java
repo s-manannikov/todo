@@ -21,17 +21,19 @@ import java.util.List;
 @WebServlet("/tasks")
 public class TaskServlet extends HttpServlet {
     private static final Store STORE = SqlStore.instOf();
+    private static final String UNDONE_TASKS = "undone tasks";
+    private static final String ALL_TASKS = "all tasks";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("json");
-        String json = req.getParameter("json");
+        String tasksRequest = req.getParameter("json");
         List<Item> items = new ArrayList<>();
-        if (json.equals("0")) {
+        if (UNDONE_TASKS.equals(tasksRequest)) {
             items = STORE.findAllUndone();
         }
-        if (json.equals("1")) {
+        if (ALL_TASKS.equals(tasksRequest)) {
             items = STORE.findAllItems();
         }
         ObjectMapper mapper = new ObjectMapper();

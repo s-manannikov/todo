@@ -25,9 +25,4 @@ public class CategoryServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         resp.getWriter().write(mapper.writeValueAsString(categories));
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
 }

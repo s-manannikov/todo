@@ -10,7 +10,7 @@ function validate() {
 
 $(document).ready(function() {
     getCategories();
-    getItems(0);
+    getItems('undone tasks');
     login();
 });
 
@@ -28,11 +28,11 @@ function getCategories() {
     });
 }
 
-function getItems(num) {
+function getItems(tasks) {
     $.ajax({
         type: 'GET',
         contentType: 'json',
-        data: {json:num},
+        data: {json:tasks},
         url: 'http://localhost:8080/todo/tasks',
     }).done(function(data) {
         for (let item of data) {
@@ -84,7 +84,7 @@ function check(checkbox) {
         }).done(function() {
             let elements = document.querySelectorAll('tr.item');
             elements.forEach(e => e.remove());
-            getItems(0);
+            getItems('undone tasks');
         });
     } else {
         $.ajax({
@@ -100,9 +100,9 @@ function getCompletedItems(checkbox) {
     let elements = document.querySelectorAll('tr.item');
     elements.forEach(e => e.remove());
     if ($(checkbox).is(":checked")) {
-        getItems(1);
+        getItems('all tasks');
     } else {
-        getItems(0);
+        getItems('undone tasks');
     }
 }
 
